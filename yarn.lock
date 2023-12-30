@@ -1420,11 +1420,6 @@ mongodb@6.2.0:
     bson "^6.2.0"
     mongodb-connection-string-url "^2.6.0"
 
-mongoose-populate-extended@^0.0.4:
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/mongoose-populate-extended/-/mongoose-populate-extended-0.0.4.tgz#ec0e797ef61a2fe20faed0a14b1c63e39237190d"
-  integrity sha512-kHGm6LMsr3detLGHcrG4r0XvDrMaFcCMf6OqRI9qq0gKM1yVIDgbb6qblQ5hQ8q0HLo3o9E8/U+CYjBrrJCI0w==
-
 mongoose@^8.0.3:
   version "8.0.3"
   resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-8.0.3.tgz#f3708ba0f40b6dec8f5f1a5d40abd69a80207114"
