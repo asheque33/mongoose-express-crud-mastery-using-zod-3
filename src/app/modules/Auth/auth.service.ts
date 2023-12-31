@@ -1,10 +1,10 @@
 import { JwtPayload } from 'jsonwebtoken';
 
-import { passwordHelpers } from './../helpers/passwordHelpers';
 import { IUser } from '../User/User.interface';
 import { User } from '../User/User.model';
 import { jwtHelpers } from '../../helpers/jwtHelpers';
 import config from '../../config';
+import { passwordHelpers } from '../../helpers/passwordHelpers';
 
 interface IRegister extends Omit<IUser, 'role' | 'passwordChangedAt'> {}
 
@@ -71,9 +71,9 @@ const login = async (payload: ILogin) => {
 
   const refreshToken = jwtHelpers.createToken(
     jwtPayload,
-    config.jwt_refresh_secret,
+    config.jwt_refresh_token,
     {
-      expiresIn: config.jwt_refresh_expires_in,
+      expiresIn: config.jwt_refresh_expiration,
     },
   );
 
@@ -148,7 +148,7 @@ const changePassword = async (
 const refreshToken = async (refreshToken: string) => {
   const decodedToken = jwtHelpers.verifyToken(
     refreshToken,
-    config.jwt_refresh_secret,
+    config.jwt_refresh_token,
   );
 
   const { email } = decodedToken as JwtPayload;
