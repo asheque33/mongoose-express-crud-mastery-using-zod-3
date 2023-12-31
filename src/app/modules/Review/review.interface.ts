@@ -4,4 +4,5 @@ export type IReview = {
   courseId: Types.ObjectId;
   rating: number;
   review: string;
+  createdBy: Types.ObjectId;
 };

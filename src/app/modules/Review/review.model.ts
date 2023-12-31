@@ -8,6 +8,10 @@ const reviewSchema = new Schema<IReview>({
   },
   rating: { type: Number, required: [true, 'Rating is required'] },
   review: { type: String, required: [true, 'Review is required'] },
+  createdBy: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+  },
 });
 
 export const Review = model<IReview>('Review', reviewSchema);

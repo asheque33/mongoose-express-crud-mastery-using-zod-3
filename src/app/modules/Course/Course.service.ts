@@ -38,7 +38,7 @@ const updateCourseFromDB = async (id: string, payLoad: Partial<ICourse>) => {
 };
 // get course by Id with reviews
 const getASpecificCoursewithReviewsFromDB = async (courseId: string) => {
-  const course = await Course.findById(courseId);
+  const course = await Course.findById(courseId).populate('User');
   const reviews = await Review.find({ courseId });
   return { course, reviews };
 };

@@ -1,6 +1,7 @@
 export type IUser = {
-    username: string;
-    email: string;
-    password: string;
-    role: 'user' | 'admin';
-  };
+  username: string;
+  email: string;
+  password: string;
+  passwordChangedAt: Date ;
+  role: string;
+};

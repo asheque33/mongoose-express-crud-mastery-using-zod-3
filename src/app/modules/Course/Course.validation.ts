@@ -27,6 +27,7 @@ export const createCourseValidationSchema = z.object({
     .int()
     .positive({ message: 'Duration must be a positive integer.' }),
   details: createDetailsSchema,
+  createdBy: z.string(),
 });
 
 // update course wit zod validator
@@ -60,6 +61,7 @@ export const updateCourseValidationSchema = z.object({
     .positive({ message: 'Duration must be a positive intger.' })
     .optional(),
   details: updateDetailsSchema.optional(),
+  createdBy: z.string().optional(),
 });
 
 export const courseValidations = {

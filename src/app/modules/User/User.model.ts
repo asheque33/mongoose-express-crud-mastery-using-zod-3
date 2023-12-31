@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-this-alias */
 import { Schema, model } from 'mongoose';
 import { IUser } from './User.interface';
-import config from '../../config';
-import bcrypt from 'bcrypt';
+import { USER_ROLE } from './User.constant';
+// import config from '../../config';
+// import bcrypt from 'bcrypt';
 
 const userSchema = new Schema<IUser>({
   username: {
@@ -11,13 +12,19 @@ const userSchema = new Schema<IUser>({
     unique: true,
   },
   email: { type: String, required: [true, 'email is required'], unique: true },
-  password: { type: String, required: [true, 'password is required'] },
-
+  password: {
+    type: String,
+    required: [true, 'password is required'],
+    select: 0,
+  },
+  passwordChangedAt: {
+    type: Date,
+    default: null,
+  },
   role: {
     type: String,
-    enum: ['user', 'admin'],
-    default: 'user',
-    required: [true, 'role is required'],
+    enum: Object.values(USER_ROLE), // ['user', 'admin']
+    default: USER_ROLE.user,
   },
 });
 

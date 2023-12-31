@@ -21,26 +21,36 @@ const detailsSchema = new Schema<IDetails>({
   description: { type: String, required: [true, 'Description is required'] },
 });
 
-const courseSchema = new Schema<ICourse>({
-  title: { type: String, unique: true, required: [true, 'title is required'] },
-  instructor: { type: String, required: [true, 'instructor is required'] },
-  categoryId: {
-    type: Schema.Types.ObjectId,
-    ref: 'Category',
-    required: [true, 'categoryId is required'],
+const courseSchema = new Schema<ICourse>(
+  {
+    title: {
+      type: String,
+      unique: true,
+      required: [true, 'title is required'],
+    },
+    instructor: { type: String, required: [true, 'instructor is required'] },
+    categoryId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Category',
+      required: [true, 'categoryId is required'],
+    },
+    price: { type: Number, required: [true, 'price is required'] },
+    tags: [tagsSchema],
+    startDate: { type: String, required: [true, 'startData is required'] },
+    endDate: { type: String, required: [true, 'endData is required'] },
+    language: { type: String, required: [true, 'Language is required'] },
+    provider: { type: String, required: [true, 'provider is  required'] },
+    durationInWeeks: {
+      type: Number,
+      required: [true, 'durationInWeeks is required'],
+    },
+    details: detailsSchema,
+    createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   },
-  price: { type: Number, required: [true, 'price is required'] },
-  tags: [tagsSchema],
-  startDate: { type: String, required: [true, 'startData is required'] },
-  endDate: { type: String, required: [true, 'endData is required'] },
-  language: { type: String, required: [true, 'Language is required'] },
-  provider: { type: String, required: [true, 'provider is  required'] },
-  durationInWeeks: {
-    type: Number,
-    required: [true, 'durationInWeeks is required'],
+  {
+    timestamps: true,
   },
-  details: detailsSchema,
-});
+);
 
 courseSchema.pre('save', async function (next) {
   const isCourseExist = await Course.findOne({

@@ -1,4 +1,4 @@
-import { Types} from 'mongoose';
+import { Types } from 'mongoose';
 
 export type ITags = {
   name: string;
@@ -22,8 +22,3 @@ export type ICourse = {
   details: IDetails;
   createdBy: Types.ObjectId;
 };
-
-// export type ICoursewithReviews = {
-//   course: Types.ObjectId;
-//   reviews: [Types.ObjectId];
-// };
