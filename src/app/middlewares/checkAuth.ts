@@ -20,15 +20,13 @@ const checkAuth = (...roles: IUserRole[]) => {
       if (err) {
         throw new AppError(httpStatus.UNAUTHORIZED, 'unAuthorized token sent');
       }
+      const role = (decode as JwtPayload).role;
+      if (roles && !roles.includes(role)) {
+        throw new AppError(httpStatus.UNAUTHORIZED, 'unAuthorized token sent');
+      }
       req.user = decoded as JwtPayload;
+      next();
     });
-
-    const role = (decode as JwtPayload).role;
-    if (roles && !roles.includes(role)) {
-      throw new AppError(httpStatus.UNAUTHORIZED, 'unAuthorized token sent');
-    }
-
-    next();
   });
 };
 export default checkAuth;

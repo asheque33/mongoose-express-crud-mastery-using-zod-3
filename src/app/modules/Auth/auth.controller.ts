@@ -36,17 +36,17 @@ const login = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-// const changePassword = catchAsync(async (req: Request, res: Response) => {
-//   const decodedToken = req.user;
-//   const result = await authServices.changePassword(decodedToken, req.body);
+const changePassword = catchAsync(async (req: Request, res: Response) => {
+  const decodedToken = req.user;
+  const result = await authServices.changePassword(decodedToken, req.body);
 
-//   sendResponse(res, {
-//     success: true,
-//     statusCode: 200,
-//     message: 'Password changed successfully',
-//     data: result,
-//   });
-// });
+  sendResponse(res, {
+    success: true,
+    statusCode: 200,
+    message: 'Password changed successfully',
+    data: result,
+  });
+});
 
 // const refreshToken = catchAsync(async (req: Request, res: Response) => {
 //   const refreshToken = req.cookies.refreshToken;
@@ -66,6 +66,6 @@ const login = catchAsync(async (req: Request, res: Response) => {
 export const authController = {
   register,
   login,
-  // changePassword,
+  changePassword,
   // refreshToken,
 };
