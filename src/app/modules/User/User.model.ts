@@ -1,46 +1,71 @@
 /* eslint-disable @typescript-eslint/no-this-alias */
 import { Schema, model } from 'mongoose';
-import { IUser } from './User.interface';
+import { IUser, UserModel } from './User.interface';
 import { USER_ROLE } from './User.constant';
-// import config from '../../config';
-// import bcrypt from 'bcrypt';
+import bcrypt from 'bcrypt';
+import config from '../../config';
 
-const userSchema = new Schema<IUser>({
-  username: {
-    type: String,
-    required: [true, 'username is required'],
-    unique: true,
+const userSchema = new Schema<IUser, UserModel>(
+  {
+    username: {
+      type: String,
+      required: [true, 'username is required'],
+      unique: true,
+    },
+    email: {
+      type: String,
+      required: [true, 'email is required'],
+      unique: true,
+    },
+    password: {
+      type: String,
+      required: [true, 'password is required'],
+      select: 0,
+    },
+    passwordChangedAt: {
+      type: Date,
+      default: null,
+      select: 0,
+    },
+    role: {
+      type: String,
+      enum: Object.values(USER_ROLE), // ['user', 'admin']
+      default: USER_ROLE.user,
+    },
   },
-  email: { type: String, required: [true, 'email is required'], unique: true },
-  password: {
-    type: String,
-    required: [true, 'password is required'],
-    select: 0,
+  {
+    timestamps: true,
   },
-  passwordChangedAt: {
-    type: Date,
-    default: null,
-  },
-  role: {
-    type: String,
-    enum: Object.values(USER_ROLE), // ['user', 'admin']
-    default: USER_ROLE.user,
-  },
+);
+
+userSchema.pre('save', async function (next) {
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
+  const user = this; // doc
+  // hashing password and save into DB
+
+  user.password = await bcrypt.hash(
+    user.password,
+    Number(config.bcrypt_salt_rounds),
+  );
+
+  next();
 });
 
-// userSchema.pre('save', async function (next) {
-//   const user = this;
-//   // hashing password and save into DB
-//   user.password = await bcrypt.hash(
-//     user.password,
-//     Number(config.bcrypt_salt_rounds),
-//   );
-//   next();
-// });
-// // post middleware hook will work after create() / save() data in database,but before response data.
-// userSchema.post('save', function (updatedDoc, next) {
-//   updatedDoc.password = '';
-//   next();
-// });
+// set '' after saving password
+userSchema.post('save', function (doc, next) {
+  doc.password = '';
+  next();
+});
 
-export const User = model<IUser>('User', userSchema);
+userSchema.statics.isUserExistsByBuiltInId = async function (username: string) {
+  return await User.findOne({ username }).select('+password');
+};
+
+userSchema.statics.isPasswordMatched = async function (
+  plainTextPassword,
+  hashedPassword,
+) {
+  return await bcrypt.compare(plainTextPassword, hashedPassword);
+};
+
+export const User = model<IUser, UserModel>('User', userSchema);

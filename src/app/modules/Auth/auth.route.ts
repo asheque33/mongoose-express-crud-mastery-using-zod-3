@@ -1,17 +1,27 @@
 import express from 'express';
 import { authController } from './auth.controller';
-import { USER_ROLE } from '../User/User.constant';
-import checkAuth from '../../middlewares/checkAuth';
+// import { USER_ROLE } from '../User/User.constant';
+// import checkAuth from '../../middlewares/checkAuth';
+import validateRequest from '../../middlewares/validateRequest';
+import { authValidationSchema } from './auth.validation';
 
 const router = express.Router();
 
-router.post('/auth/register', authController.register);
-router.post('/auth/login', authController.login);
-router.patch(
-  '/change-password',
-  checkAuth(USER_ROLE.admin, USER_ROLE.user),
-  authController.changePassword,
+router.post(
+  '/auth/register',
+  validateRequest(authValidationSchema.registerUserValidationSchema),
+  authController.register,
 );
-router.post('/refresh-token', authController.refreshToken);
+router.post(
+  '/auth/login',
+  // validateRequest(authValidationSchema.logInUserValidationSchema),
+  authController.login,
+);
+// router.post(
+//   '/auth/change-password',
+//   checkAuth(USER_ROLE.admin),
+//   authController.changePassword,
+// );
+// router.post('/refresh-token', authController.refreshToken);
 
 export const authRoutes = router;

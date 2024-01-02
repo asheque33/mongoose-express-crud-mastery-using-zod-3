@@ -1,49 +1,34 @@
 import { NextFunction, Request, Response } from 'express';
-import catchAsyncFunction from '../utils/catchAsync';
-import { JwtPayload } from 'jsonwebtoken';
-
+import jwt, { JwtPayload, decode } from 'jsonwebtoken';
+import catchAsync from '../utils/catchAsync';
+import AppError from '../errors/appError';
+import httpStatus from 'http-status';
+import { IUserRole } from '../modules/User/User.interface';
 import config from '../config';
-import { jwtHelpers } from '../helpers/jwtHelpers';
-import { User } from '../modules/User/User.model';
-import { USER_ROLE } from '../modules/User/User.constant';
 
-const checkAuth = (...roles: Array<keyof typeof USER_ROLE>) => {
-  // roles: ['user' | 'admin']
-  // roles: ("user" | "admin")[]
-  console.log(roles);
-  return catchAsyncFunction(
-    async (req: Request, res: Response, next: NextFunction) => {
-      const token = req.headers.authorization;
-      console.log(token);
-
-      if (!token) {
-        throw new Error('Invalid token');
+const checkAuth = (...roles: IUserRole[]) => {
+  return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const token = req.headers.authorization;
+    console.log(token, 'token console');
+    console.log(req.headers['Authorization']);
+    // checking if the token is sent from the client or not
+    if (!token) {
+      throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorized');
+    }
+    // check if the token is sent from the authorization server
+    jwt.verify(token, config.jwt_access_token, function (err, decoded) {
+      if (err) {
+        throw new AppError(httpStatus.UNAUTHORIZED, 'unAuthorized token sent');
       }
+      req.user = decoded as JwtPayload;
+    });
 
-      // const decodedToken = jwt.verify(token, config.jwt_access_secret)
-      const decodedToken = jwtHelpers.verifyToken(
-        token,
-        config.jwt_access_token,
-      );
-      req.user = decodedToken as JwtPayload;
+    const role = (decode as JwtPayload).role;
+    if (roles && !roles.includes(role)) {
+      throw new AppError(httpStatus.UNAUTHORIZED, 'unAuthorized token sent');
+    }
 
-      const { email } = decodedToken as JwtPayload;
-
-      const user = await User.findOne({ email });
-
-      // Authentication
-      if (!user) {
-        throw new Error('Invalid email or password');
-      }
-
-      //Authorization
-      if (!roles.includes(user?.role)) {
-        throw new Error('You are not authorized to create user');
-      }
-
-      next();
-    },
-  );
+    next();
+  });
 };
-
 export default checkAuth;
